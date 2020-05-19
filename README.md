@@ -20,7 +20,7 @@ Note that the steps below do not put into the considerations of high availabilit
 
 Login with user `system:admin`, create a project (e.g.: `rmetrics`, short for router metrics) to host the deployments and store the project name into the shell variable `PROJECT`:
 
-```console
+```shell
 # oc login -u system:admin
 
 # oc new-project rmetrics; PROJECT=$(oc project -q)
@@ -28,7 +28,7 @@ Login with user `system:admin`, create a project (e.g.: `rmetrics`, short for ro
 
 Ensure project `rmetrics` is the current namespace:
 
-```console
+```shell
 # oc project
 Using project "rmetrics" on server "https://xyz.example.com:443".
 ```
