@@ -1,10 +1,3 @@
----
-tags: [Notebooks/red hat/openshift]
-title: Visualizing OpenShift HAProxy Router Metrics
-created: '2020-05-18T21:47:29.488Z'
-modified: '2020-05-19T18:10:00.649Z'
----
-
 # Visualizing OpenShift HAProxy Router Metrics
 
 Currently, there is an inherited challenge with the default Prometheus Cluster Monitoring stack that ships with Red Hat OpenShift Container Platform 3.11, which it [does not scrape the exposed Prometheus format HAProxy router metrics](https://bugzilla.redhat.com/show_bug.cgi?id=1653532), but addressed and resolved in the later 4.x version.
@@ -327,7 +320,7 @@ grafana   grafana-rmetrics.apps.bb12.example.opentlc.com             grafana    
 
 Connect to the Prometheus instance via its exposed route, make sure its targets are up and running.
 
-![prometheus-targets.png](../images/prometheus-targets.png)
+![prometheus-targets.png](images/prometheus-targets.png)
 
 
 ## Grafana HAProxy Dashboard
@@ -338,7 +331,7 @@ For the first time access, the default administrator credential is admin/admin, 
 
 Click `Home` at the top left corner and select the `HAProxy` dashboard.
 
-![grafana-haproxy.png](../images/grafana-haproxy.png)
+![grafana-haproxy.png](images/grafana-haproxy.png)
 
 
 ## Summary
