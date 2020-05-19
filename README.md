@@ -1,6 +1,6 @@
 # Visualizing OpenShift HAProxy Router Metrics
 
-Currently, there is an inherited challenge with the default Prometheus Cluster Monitoring stack that ships with Red Hat OpenShift Container Platform 3.11, which it [does not scrape the exposed Prometheus format HAProxy router metrics](https://bugzilla.redhat.com/show_bug.cgi?id=1653532), but addressed and resolved in the later 4.x version.
+Currently, there is an inherited challenge with the default Prometheus Cluster Monitoring stack that ships with Red Hat OpenShift Container Platform 3.11, which it [does not scrape the exposed Prometheus format HAProxy router metrics](https://bugzilla.redhat.com/show_bug.cgi?id=1653532), but addressed and resolved in the later 4.x versions.
 
 This blog post will demonstrate a straightforward way on how to visualize the HAProxy Router metrics running in OpenShift Container Platform 3.11. The focus will be using `oc` command CLI to fully deploy the apps without using the WebUI. Web interfaces of Prometheus and Grafana will be utilized at the end to visualize the metrics.
 
