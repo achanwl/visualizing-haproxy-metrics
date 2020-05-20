@@ -344,6 +344,5 @@ In this post, it shows that it's fairly easy to visualize the already exposed HA
 1. https://docs.openshift.com/container-platform/3.11/install_config/router/default_haproxy_router.html#exposing-the-router-metrics
 2. https://prometheus.io/docs/prometheus/latest/getting_started/
 3. https://grafana.com/docs/grafana/latest/
-4. https://grafana.com/grafana/dashboards/2428, https://github.com/rfrail3/grafana-dashboards
-
+4. https://grafana.com/grafana/dashboards/2428
 
