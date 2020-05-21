@@ -376,7 +376,7 @@ Click `Home` at the top left corner and select the `HAProxy` dashboard.
 
 ## Summary
 
-In this post, it shows that it's fairly easy to visualize the already exposed HAProxy router metrics by deploying a simple basic custom Prometheus and Grafana stack. One can further expands on the idea to build a more robust, high availability stack with additional security considerations.
+In this post, it shows that it's fairly easy to visualize the already exposed HAProxy router metrics by deploying a simple basic custom Prometheus and Grafana stack. One can further expand on the idea to build a more robust, high availability stack with additional security considerations.
 
 
 ## References
