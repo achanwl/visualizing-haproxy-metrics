@@ -92,7 +92,7 @@ prometheus-config   1         18s
 
 ## Persistent Storage for Prometheus
 
-Providing persistent volume to the Prometheus pod allows it to survive a pod restarted or recreated. It also avoids out of space or quota limitation with default `emptyDir` volume.
+Providing persistent volume to the Prometheus pod allows the collected metrics data to survive a pod restarted or recreated. It also avoids out of space or quota limitation with default `emptyDir` volume.
 
 Create a `PersistentVolumeClaim` that would utilize the default dynamic provisioning `StorageClass`.
 
@@ -115,16 +115,12 @@ spec:
 EOF
 ```
 
-Verify results:
+Verify result:
 
 ```console
-# oc -n $PROJECT get pvc
+# oc -n $PROJECT get pvc -l app=prometheus
 NAME              STATUS    VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS        AGE
 prometheus-data   Bound     pvc-2e849223-9980-11ea-ac09-0ab988e0ac13   10Gi       RWO            glusterfs-storage   18s
-
-# oc get pv pvc-2e849223-9980-11ea-ac09-0ab988e0ac13
-NAME                                       CAPACITY   ACCESS MODES   RECLAIM POLICY   STATUS    CLAIM                      STORAGECLASS        REASON    AGE
-pvc-2e849223-9980-11ea-ac09-0ab988e0ac13   10Gi       RWO            Delete           Bound     rmetrics/prometheus-data   glusterfs-storage             18s
 ```
 
 
@@ -273,6 +269,40 @@ grafana-dashboard-haproxy   1         18s
 ```
 
 
+## Persistent Storage for Grafana
+
+Providing persistent volume to the Grafana pod allows the configuration data to survive a pod restarted or recreated.
+
+Create a `PersistentVolumeClaim` that would utilize the default dynamic provisioning `StorageClass`.
+
+For instance, a `1Gi` claim with `ReadWriteOnce` access:
+
+```console
+# oc -n $PROJECT create -f - <<EOF
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: grafana-data
+  labels:
+    app: grafana
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
+EOF
+```
+
+Verify result:
+
+```console
+# oc -n $PROJECT get pvc -l app=grafana
+NAME           STATUS    VOLUME                                     CAPACITY   ACCESS MODES   STORAGECLASS        AGE
+grafana-data   Bound     pvc-8f621778-9b03-11ea-aaeb-0ab988e0ac13   1Gi        RWO            glusterfs-storage   18s
+```
+
+
 ## Grafana Pod
 
 Create the Grafana pod from the `grafana/grafana` image using `new-app`:
@@ -283,6 +313,16 @@ Create the Grafana pod from the `grafana/grafana` image using `new-app`:
 # oc -n $PROJECT get pod -l app=grafana
 NAME              READY     STATUS    RESTARTS   AGE
 grafana-1-446fv   1/1       Running   0          18s
+```
+
+Add the `1Gi` PVC created earlier and mount it at `/var/lib/grafana`, thus a new revision of the pod is created:
+
+```console
+# oc -n $PROJECT set volume dc/grafana --add --name=grafana-volume -t pvc -m /var/lib/grafana --claim-name=grafana-data
+
+# oc -n $PROJECT get pod -l app=grafana
+NAME              READY     STATUS    RESTARTS   AGE
+grafana-2-lcphd   1/1       Running   0          18s
 ```
 
 Update the `Deploymentconfig`, so that the new revision will:
@@ -302,7 +342,7 @@ Update the `Deploymentconfig`, so that the new revision will:
 
 # oc -n $PROJECT get pod -l app=grafana
 NAME              READY     STATUS    RESTARTS   AGE
-grafana-4-2bpf8   1/1       Running   0          18s
+grafana-5-2bpf8   1/1       Running   0          18s
 ```
 
 Create a route to allow external access:
@@ -336,7 +376,7 @@ Click `Home` at the top left corner and select the `HAProxy` dashboard.
 
 ## Summary
 
-In this post, it shows that it's fairly easy to visualize the already exposed HAProxy router metrics by deploying a simple basic custom Prometheus and Grafana stack. One can further expands on the idea to build a more robust, high availability stack with additional security considerations.   
+In this post, it shows that it's fairly easy to visualize the already exposed HAProxy router metrics by deploying a simple basic custom Prometheus and Grafana stack. One can further expands on the idea to build a more robust, high availability stack with additional security considerations.
 
 
 ## References
