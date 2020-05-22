@@ -360,7 +360,7 @@ grafana   grafana-rmetrics.apps.bb12.example.opentlc.com             grafana    
 
 Connect to the Prometheus instance via its exposed route, make sure its targets are up and running.
 
-![prometheus-targets.png](../images/prometheus-targets.png)
+![prometheus-targets.png](images/prometheus-targets.png)
 
 
 ## Grafana HAProxy Dashboard
@@ -371,7 +371,7 @@ For first time access, the default administrator credential is admin/admin, new 
 
 Click `Home` at the top left corner and select the `HAProxy` dashboard.
 
-![grafana-haproxy.png](../images/grafana-haproxy.png)
+![grafana-haproxy.png](images/grafana-haproxy.png)
 
 
 ## Summary
