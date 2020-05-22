@@ -1,19 +1,19 @@
 # Visualizing OpenShift HAProxy Router Metrics
 
-Currently, there is an inherited challenge with the default Prometheus Cluster Monitoring stack that ships with Red Hat OpenShift Container Platform 3.11, which it [does not scrape the exposed Prometheus format HAProxy router metrics](https://bugzilla.redhat.com/show_bug.cgi?id=1653532), but addressed and resolved in the later 4.x versions.
+In the default Prometheus Cluster Monitoring stack that ships with Red Hat OpenShift Container Platform 3.11, there is an inherent challenge to visualize the exposed HAProxy router metrics as the Prometheus data is [not scraped](https://bugzilla.redhat.com/show_bug.cgi?id=1653532). This has been addressed and resolved in the later 4.x versions.
 
-This blog post will demonstrate a straightforward way on how to visualize the HAProxy Router metrics running in OpenShift Container Platform 3.11. The focus will be using `oc` command CLI to fully deploy the apps without using the WebUI. Web interfaces of Prometheus and Grafana will be utilized at the end to visualize the metrics.
+This blog post will demonstrate a straightforward way on how to visualize the HAProxy Router metrics running in OpenShift Container Platform 3.11. The focus will be using `oc` CLI to fully deploy applications without using the web interface. Then, the web interfaces of Prometheus and Grafana will be utilized at the end to visualize the metrics.
 
-Note that the steps below do not put into the considerations of high availability or security aspects of the deployments, nor utilizing the built-in OAuth server inside OpenShift Container Platform. Additionally, the latest upstream community Prometheus and Grafana images are used. As such, therefore, Red Hat does not provide support for customized solutions that are not shipped with the product. 
+Note that the steps below do not put into consideration the high availability or security aspects of the deployments, nor utilizing the built-in OAuth server inside OpenShift Container Platform. Additionally, the latest upstream community Prometheus and Grafana images are used. As such, therefore, Red Hat does not provide support for customized solutions that are not shipped with the product. 
 
 
 ## Prerequisites
 
-- An user with `cluster-admin` privilege, e.g: `system:admin`.
+- A user with `cluster-admin` privilege, e.g: `system:admin`.
 - Access to `oc` CLI command, which can connect to the desired cluster.
 - The cluster has internet access to pull images from docker.io registry.
-- A default `StorageClass` providing dynamic provisioning persistent storage, preferably backed by block storage technology. 
-- Basic knowledge of Prometheus and Grafana.
+- A default `StorageClass` provides dynamic provisioning persistent storage, preferably backed by block storage technology. 
+- Basic knowledge and understanding of Prometheus and Grafana.
 
 
 ## Login and Project
@@ -38,11 +38,11 @@ Using project "rmetrics" on server "https://xyz.example.com:443".
 
 Create a basic minimal Prometheus configuration in a `ConfigMap` resource for the Prometheus pod to use.
 
-In this example, the intervals for scraping and evaluation are set at 10s. It also has one and only one scrape config job named `openshift-router`.
+In this example, the intervals for scraping and evaluation are set at 10 seconds. It has only one scrape config job named `openshift-router`.
 
 This scrape config job points to the exposed router metrics target endpoints. It uses `https` protocol, the server name used in the serving TLS certificate is `router.default.svc` and can be verified by the service CA bundle that is automatically mounted in the pods.
 
-It has a static config that points to 3 static targets, each target has an IP and a port of the default exposed router metrics endpoint of each pod. The targets can be extracted dynamically as noted in the yaml, assuming default router deployment and that there are 3 replicas of the router pods. Adjust accordingly to fit desired configuration.
+This example has a static config that points to 3 static targets, each target has an IP and a port of the default exposed router metrics endpoint of each pod. The targets can be extracted dynamically as noted in the yaml, assuming default router deployment and that there are 3 replicas of the router pods. Adjust accordingly to fit desired configuration.
 
 The metrics path is also defined here.
 
@@ -92,7 +92,7 @@ prometheus-config   1         18s
 
 ## Persistent Storage for Prometheus
 
-Providing persistent volume to the Prometheus pod allows the collected metrics data to survive a pod restarted or recreated. It also avoids out of space or quota limitation with default `emptyDir` volume.
+Providing persistent volume to the Prometheus pod allows the collected metrics data to survive a pod being restarted or recreated. It also avoids an out of space or quota limitation with default `emptyDir` volume.
 
 Create a `PersistentVolumeClaim` that would utilize the default dynamic provisioning `StorageClass`.
 
@@ -174,7 +174,7 @@ prometheus   prometheus-rmetrics.apps.bb12.example.opentlc.com             prome
 
 Create a basic Grafana data source config in a `ConfigMap` resource for the Grafana pod to use.
 
-In this example, the URL of the `prometheus` type data source is set to the internal service endpoint of the created Prometheus pod using the proxy access.
+In the following example, the URL of the `prometheus` type data source is set to the internal service endpoint of the created Prometheus pod using the proxy access.
 
 Additionally, it's set as the default data source and not editable.
 
@@ -210,9 +210,9 @@ grafana-datasources   1         18s
 
 ## Dashboard Provider for Grafana
 
-Create a basic Grafana dashboard provider config in a `ConfigMap` resource for the Grafana pod to use.
+Next, create a basic Grafana dashboard provider config in a `ConfigMap` resource for the Grafana pod to use.
 
-In this example, a provider named `HAProxy` is hosting the dashboard json file at this path `/var/lib/grafana/dashboards/haproxy`.
+In the following example, a provider named `HAProxy` is hosting the dashboard json file at this path `/var/lib/grafana/dashboards/haproxy`.
 
 ```console
 # oc -n $PROJECT create -f - <<EOF
@@ -248,7 +248,7 @@ grafana-dashboards   1         18s
 
 ## Prometheus HAProxy Dashboard
 
-There is a nice community built [dashboard](https://grafana.com/grafana/dashboards/2428) for HAProxy router metrics that are exposed in Prometheus format, which will be utilized.
+In this link there is a nice example of a community built [dashboard](https://grafana.com/grafana/dashboards/2428) for HAProxy router metrics that are exposed in Prometheus format, which will be utilized.
 
 Grab the dashboard json file for HAProxy below version 2.0, adjust it to use the named `Prometheus` data source and create a `ConfigMap` resource out of it for the Grafana pod to use.
 
@@ -271,7 +271,7 @@ grafana-dashboard-haproxy   1         18s
 
 ## Persistent Storage for Grafana
 
-Providing persistent volume to the Grafana pod allows the configuration data to survive a pod restarted or recreated.
+Providing persistent volume to the Grafana pod allows the configuration data to survive a pod being restarted or recreated.
 
 Create a `PersistentVolumeClaim` that would utilize the default dynamic provisioning `StorageClass`.
 
@@ -360,23 +360,23 @@ grafana   grafana-rmetrics.apps.bb12.example.opentlc.com             grafana    
 
 Connect to the Prometheus instance via its exposed route, make sure its targets are up and running.
 
-![prometheus-targets.png](images/prometheus-targets.png)
+![prometheus-targets.png](../images/prometheus-targets.png)
 
 
 ## Grafana HAProxy Dashboard
 
 Connect to the Grafana instance via its exposed route.
 
-For the first time access, the default administrator credential is admin/admin, new password change will be prompted.
+For first time access, the default administrator credential is admin/admin, new password change will be prompted.
 
 Click `Home` at the top left corner and select the `HAProxy` dashboard.
 
-![grafana-haproxy.png](images/grafana-haproxy.png)
+![grafana-haproxy.png](../images/grafana-haproxy.png)
 
 
 ## Summary
 
-In this post, it shows that it's fairly easy to visualize the already exposed HAProxy router metrics by deploying a simple basic custom Prometheus and Grafana stack. One can further expand on the idea to build a more robust, high availability stack with additional security considerations.
+This post shows that it's fairly easy to visualize the already exposed HAProxy router metrics by deploying a simple basic custom Prometheus and Grafana stack. One can further expand on the idea to build a more robust, high availability stack with additional security considerations.   
 
 
 ## References
@@ -385,4 +385,6 @@ In this post, it shows that it's fairly easy to visualize the already exposed HA
 2. https://prometheus.io/docs/prometheus/latest/getting_started/
 3. https://grafana.com/docs/grafana/latest/
 4. https://grafana.com/grafana/dashboards/2428
+
+
 
